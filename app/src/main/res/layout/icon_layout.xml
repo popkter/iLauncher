@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:padding="10dp">
 
-    <com.popkter.ilauncher.common.RoundRecImageView
+    <com.popkter.ilauncher.RoundedImageView
         android:id="@+id/icon"
         android:layout_width="60dp"
         android:layout_height="60dp"
