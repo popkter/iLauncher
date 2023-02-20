@@ -3,8 +3,6 @@ package com.popkter.ilauncher
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.Configuration
 import android.os.Build
@@ -17,11 +15,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.popkter.ilauncher.data.AppsDataModel
 import com.popkter.ilauncher.common.IconAdapter
 import com.popkter.ilauncher.common.IconTouchHelper
+import com.popkter.ilauncher.data.AppsDataModel
 import com.popkter.ilauncher.databinding.ActivityMainBinding
+import java.util.*
 
 
 class MainActivity : Activity() {
@@ -81,24 +79,15 @@ class MainActivity : Activity() {
     private fun loadApps(): List<ResolveInfo> {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        val list = packageManager.queryIntentActivities(intent, 0)
-        for (item in list) {
-            Log.e(
-                TAG,
-                "loadApps: ${item.activityInfo.loadLabel(packageManager)} ${
-                    item.activityInfo.loadIcon(packageManager)
-                }"
-            )
-        }
-        return list
+        return packageManager.queryIntentActivities(intent, 0)
     }
 
     override fun onResume() {
         super.onResume()
         //viewModel.appsDataList.postValue(getAllAppNames())
-        viewModel.appsDataResolveList.postValue(loadApps())
-        activityMainBinding.allMenu.adapter?.notifyDataSetChanged()
-
+        val list = loadApps()
+        Collections.sort(list, ResolveInfo.DisplayNameComparator(packageManager))
+        viewModel.appsDataResolveList.postValue(list)
     }
 
 
